@@ -34,4 +34,25 @@ const audio = {
         html5: true,
         volume: 0.05
     }),
+    jedziemy: new Howl({
+        src: './audio/jedziemy2.mp3',
+        html5: true,
+        volume: 0.01
+    }),
+    formacja: new Howl({
+        src: './audio/formacja.mov',
+        html5: true,
+        volume: 0.03
+    }),
+    ojoj: new Howl({
+        src: './audio/okurwa.mov',
+        html5: true,
+        volume: 0.1
+    }),
+    czempions: new Howl({
+        src: './audio/czempions.mp3',
+        html5: true,
+        volume: 0.02
+    })
+    
 }

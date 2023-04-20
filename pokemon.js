@@ -170,8 +170,8 @@ function animete() {
                 }
             })
             audio.Map.stop()
-            audio.initBattle.play()
-            audio.battle.play()
+            audio.ojoj.play()
+            audio.czempions.play()
             battle.initiated = true
             break
          }
@@ -322,6 +322,7 @@ let clicked = false
 addEventListener('click', () => {
     if(!clicked) {
         audio.Map.play()
+        audio.jedziemy.play()
         clicked = true
     }
 })

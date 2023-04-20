@@ -100,8 +100,8 @@ class Monster extends Sprite {
         gsap.to(this, {
             opacity: 0,
         })
-        audio.battle.stop()
-        audio.victory.play()
+        audio.czempions.stop()
+        audio.formacja.play()
     }
 
     attack({attacks, recipient, renderedSprites}) {

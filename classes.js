@@ -119,9 +119,125 @@ class Monster extends Sprite {
         if(this.isEnemy) rotation = -2.2
 
         let healthBar = '#enemyHealthBar'
-        if(this.isEnemy) healthBar = '#playerHealthBar'
+        if(this.isEnemy) healthBar = '#playerHealthBar' 
+
+        let movementDistanceX = 460
+        if(this.isEnemy) movementDistanceX = -460
+
+        let movementDistanceY = 220
+        if(this.isEnemy) movementDistanceY =  -220
+
+        let movementDistance = 40
+        if(this.isEnemy) movementDistance = -20
 
         switch(attacks.name) {
+            case 'Windslash':
+                audio.initFireball.play()
+                const windslashImage = new Image()
+                windslashImage.src = './img/windslash.png'
+                const windslash = new Sprite({
+                position:{
+                x: recipient.position.x - 140,
+                y: recipient.position.y - 200
+                },
+                image: windslashImage,
+                frames: {
+                max:4,
+                hold:8
+                },
+                animate: true
+                        
+            })
+                renderedSprites.splice(1, 0, windslash)
+                gsap.to(windslash.position, {
+                    x: recipient.position.x - 140,
+                    y: recipient.position.y - 200,
+                    onComplete: () => {
+                        renderedSprites.splice(1,1)
+                        audio.fireBallHit.play()
+                        gsap.to( healthBar ,{
+                            width: recipient.health + '%'
+                        }),
+                        gsap.to(recipient.position, {
+                            x: recipient.position.x + 10,
+                            yoyo:true,
+                            repeat: 5,
+                            duration: 0.08
+                        }),
+                        gsap.to(recipient, {
+                            opacity:0,
+                            repeat: 5,
+                            yoyo:true,
+                            duration: 0.08
+                        })
+                        
+                    }                     
+                })
+                break
+            
+
+            case 'Fireblaze':
+        
+
+        tl.to(this.position, {
+            x: this.position.x - movementDistance,
+            duration: 0.1
+        }).to(this.position, {
+            x:this.position.x + movementDistanceX,
+            y:this.position.y - movementDistanceY,
+            duration: 0.3,
+            onComplete: () => {
+                audio.fireBallHit.play()
+                gsap.to( healthBar ,{
+                    width: recipient.health + 10 + '%'
+                    
+                })
+                gsap.to(recipient.position, {
+                    x: recipient.position.x + 10,
+                    yoyo:true,
+                    repeat: 5,
+                    duration: 0.08
+                }),
+                gsap.to(recipient, {
+                    opacity:0,
+                    repeat: 5,
+                    yoyo:true,
+                    duration: 0.08
+                })           
+            }
+        }).to(this.position, {
+            x:this.position.x,
+            y:this.position.y,
+            duration: 0.3 
+        }).to(this.position, {
+            x:this.position.x + movementDistanceX,
+            y:this.position.y - movementDistanceY,
+            duration: 0.3,
+            onComplete: () => {
+                audio.fireBallHit.play()
+                gsap.to( healthBar ,{
+                    width: recipient.health + '%',
+                    
+                })
+                gsap.to(recipient.position, {
+                    x: recipient.position.x + 10,
+                    yoyo:true,
+                    repeat: 5,
+                    duration: 0.08
+                }),
+                gsap.to(recipient, healthBar, {
+                    opacity:0,
+                    repeat: 5,
+                    yoyo:true,
+                    duration: 0.08
+                })            
+            }
+        }).to(this.position, {
+            x:this.position.x,
+            y:this.position.y,
+            duration: 0.3
+        })
+            break
             case 'Fireball':
                 audio.initFireball.play()
                 const fireballImage = new Image()
@@ -167,14 +283,7 @@ class Monster extends Sprite {
                 break
             case 'Tackle':
         
-            let movementDistanceX = 460
-        if(this.isEnemy) movementDistanceX = -460
-
-        let movementDistanceY = 220
-        if(this.isEnemy) movementDistanceY =  -220
-
-        let movementDistance = 40
-        if(this.isEnemy) movementDistance = -20
+         
 
         tl.to(this.position, {
             x: this.position.x - movementDistance,
@@ -213,6 +322,7 @@ class Monster extends Sprite {
             duration: 0.3
         })
             break;
+            
         }
     }
 

@@ -1,4 +1,4 @@
-//animete()
+animete()
 
 const battleBackgroundImage = new Image()
 battleBackgroundImage.src = './img/battleBackground.png'
@@ -118,8 +118,8 @@ function animateBattle() {
     
 }
 
-initBattle()
-animateBattle()
+//initBattle()
+//animateBattle()
 
 
 document.querySelector('#dialogueBox').addEventListener('click', (e) =>{

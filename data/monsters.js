@@ -18,19 +18,19 @@ const monsters = {
 
     Draggle: {
         position: {
-            x: 800,
-            y: 100
+            x: 780,
+            y: 30
         },
         image: {
-            src: './img/draggleSprite.png'
+            src: './img/charmanderSprite.png'
         },
             frames: {
-                max:4,
-                hold: 25
+                max:8,
+                hold: 10
             },
         animate: true,
         isEnemy: true,
-        name: 'Draggle',
+        name: 'Charmander',
         attacks: [attacks.Tackle, attacks.Fireball, attacks.Fireblaze]
     }
 }

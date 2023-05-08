@@ -137,8 +137,8 @@ class Monster extends Sprite {
                 windslashImage.src = './img/windslash.png'
                 const windslash = new Sprite({
                 position:{
-                x: recipient.position.x - 140,
-                y: recipient.position.y - 200
+                x: recipient.position.x - 120,
+                y: recipient.position.y - 130
                 },
                 image: windslashImage,
                 frames: {
@@ -150,8 +150,8 @@ class Monster extends Sprite {
             })
                 renderedSprites.splice(1, 0, windslash)
                 gsap.to(windslash.position, {
-                    x: recipient.position.x - 140,
-                    y: recipient.position.y - 200,
+                    x: recipient.position.x - 120,
+                    y: recipient.position.y - 130,
                     onComplete: () => {
                         renderedSprites.splice(1,1)
                         audio.fireBallHit.play()

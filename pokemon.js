@@ -114,7 +114,6 @@ charactersMap.forEach((row, i) =>{
     }
   })
 })
-console.log(characters)
 const characters1 = []
 const oldmanImg = new Image()
 oldmanImg.src = './img/oldman/Idle.png'
@@ -145,7 +144,6 @@ charactersMap2.forEach((row, i) =>{
     }
   })
 })
-console.log(characters1)
 
 
 const image = new Image()

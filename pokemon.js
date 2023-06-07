@@ -221,9 +221,11 @@ function animete() {
     rendeables.forEach((rendeable) => {
     rendeable.draw()
     })
-    
-   
 
+    const speed = 3
+
+    const speedXY = Math.sqrt(speed*speed/2)
+    
    let moving = true
    player.animate = false
 
@@ -287,7 +289,7 @@ function animete() {
                         ...boundary,
                         position: {
                             x: boundary.position.x,
-                            y: boundary.position.y -3
+                            y: boundary.position.y - speed
                         }
                     }
                 })
@@ -298,7 +300,7 @@ function animete() {
              }
             } if(moving)
         movables.forEach((movable) => {
-            movable.position.y -=3
+            movable.position.y -=speed
         }) 
         
     }else if(keys.w.pressed && !keys.d.pressed && !keys.a.pressed) {
@@ -313,7 +315,7 @@ function animete() {
                         ...boundary,
                         position: {
                             x: boundary.position.x,
-                            y: boundary.position.y + 3
+                            y: boundary.position.y + speed
                         }
                     }
                 })
@@ -323,7 +325,7 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.y +=3
+            movable.position.y +=speed
         })
     }else if(keys.a.pressed && !keys.w.pressed && !keys.s.pressed) {
         player.animate = true
@@ -336,7 +338,7 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x +3,
+                            x: boundary.position.x +speed,
                             y: boundary.position.y
                         }
                     }
@@ -347,7 +349,7 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x +=3})
+            movable.position.x +=speed})
     }else if(keys.d.pressed && !keys.w.pressed && !keys.s.pressed) {
         player.animate = true
         player.image = player.sprites.right
@@ -359,7 +361,7 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x -3,
+                            x: boundary.position.x -speed,
                             y: boundary.position.y
                         }
                     }
@@ -370,7 +372,7 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x -=3})
+            movable.position.x -=speed})
     }
     else if(keys.w.pressed && keys.d.pressed ) {
         player.animate = true
@@ -383,8 +385,8 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x -3,
-                            y: boundary.position.y +3
+                            x: boundary.position.x -speedXY,
+                            y: boundary.position.y +speedXY
                         }
                     }
                 })
@@ -394,8 +396,8 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x -=2
-            movable.position.y +=2
+            movable.position.x -= speedXY
+            movable.position.y += speedXY
         })
     }
     else if(keys.w.pressed && keys.a.pressed ) {
@@ -409,8 +411,8 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x +3,
-                            y: boundary.position.y +3
+                            x: boundary.position.x +speedXY,
+                            y: boundary.position.y +speedXY
                         }
                     }
                 })
@@ -420,8 +422,8 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x +=2
-            movable.position.y +=2
+            movable.position.x += speedXY
+            movable.position.y += speedXY
         })
     }
     else if(keys.s.pressed && keys.a.pressed ) {
@@ -435,8 +437,8 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x +3,
-                            y: boundary.position.y -3
+                            x: boundary.position.x +speedXY,
+                            y: boundary.position.y -speedXY
                         }
                     }
                 })
@@ -446,8 +448,8 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x +=2
-            movable.position.y -=2
+            movable.position.x += speedXY
+            movable.position.y -= speedXY
         })
     }
     else if(keys.s.pressed && keys.d.pressed ) {
@@ -461,8 +463,8 @@ function animete() {
                     rectangle2: {
                         ...boundary,
                         position: {
-                            x: boundary.position.x -3,
-                            y: boundary.position.y +3
+                            x: boundary.position.x -speedXY,
+                            y: boundary.position.y +speedXY
                         }
                     }
                 })
@@ -472,8 +474,8 @@ function animete() {
             }
         } if(moving)
         movables.forEach((movable) => {
-            movable.position.x -=2
-            movable.position.y -=2
+            movable.position.x -= speedXY
+            movable.position.y -= speedXY
         })
     }
 

@@ -19,10 +19,6 @@ const charactersMap = []
 for (let i = 0; i < charactersMapData.length; i += 70) {
     charactersMap.push(charactersMapData.slice(i,70 + i))
 }
-const charactersMap2 = []
-for (let i = 0; i < charactersMapData2.length; i += 70) {
-    charactersMap2.push(charactersMapData2.slice(i,70 + i))
-}
 
 const boundaries = []
 const offset = {
@@ -58,6 +54,8 @@ battleZonesMap.forEach((row, i) =>{
 })
 const characters = []
 const villagerImg = new Image()
+const oldmanImg = new Image()
+oldmanImg.src = './img/oldman/Idle.png'
 villagerImg.src = './img/villager/Idle.png'
 charactersMap.forEach((row, i) =>{
     row.forEach((symbol, j) =>{
@@ -83,13 +81,7 @@ charactersMap.forEach((row, i) =>{
         animate: true
      })
     )
-    }
-  })
-})
-villagerImg.src = './img/villager/Idle.png'
-charactersMap.forEach((row, i) =>{
-    row.forEach((symbol, j) =>{
-        if(symbol === 1028) { 
+    } else if (symbol === 1028) { 
         boundaries.push(
             new Boundary({position: {
               x:j * Boundary.width + offset.x,
@@ -111,15 +103,7 @@ charactersMap.forEach((row, i) =>{
         animate: false
      })
     )
-    }
-  })
-})
-const characters1 = []
-const oldmanImg = new Image()
-oldmanImg.src = './img/oldman/Idle.png'
-charactersMap2.forEach((row, i) =>{
-    row.forEach((symbol, j) =>{
-        if(symbol === 1030) { 
+    } else if (symbol === 1030) { 
         boundaries.push(
             new Boundary({position: {
               x:j * Boundary.width + offset.x,
@@ -127,7 +111,7 @@ charactersMap2.forEach((row, i) =>{
           }
        })
       )
-        characters1.push(
+        characters.push(
           new Sprite({position: {
             x:j * Boundary.width + offset.x,
             y:i * Boundary.height + offset.y
@@ -144,6 +128,7 @@ charactersMap2.forEach((row, i) =>{
     }
   })
 })
+
 
 
 const image = new Image()
@@ -204,14 +189,10 @@ const keys = {
 }
 
 
-const movables = [background, ...boundaries, ...battleZones, ...characters, ...characters1]
-const rendeables =[background, ...boundaries, ...battleZones,...characters,...characters1, player]
-function rectangularCollision({rectangle1, rectangle2}) {
-    return(rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
-           rectangle1.position.x <= rectangle2.position.x + rectangle2.width &&
-           rectangle1.position.y + rectangle1.height >= rectangle2.position.y &&
-           rectangle1.position.y <= rectangle2.position.y + rectangle2.height)
-}
+const movables = [background, ...boundaries, ...battleZones, ...characters,]
+const rendeables =[background, ...boundaries, ...battleZones,...characters, player]
+
+
 const battle = {
     initiated: false
 }
@@ -280,6 +261,8 @@ function animete() {
     if(keys.s.pressed && !keys.a.pressed && !keys.d.pressed){
         player.animate = true
         player.image = player.sprites.down
+        checkForCharacterCollision({characters, player, characterOffset: {x:0 , y: -speed}})
+
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -306,6 +289,7 @@ function animete() {
     }else if(keys.w.pressed && !keys.d.pressed && !keys.a.pressed) {
         player.animate = true
         player.image = player.sprites.up
+        checkForCharacterCollision({characters, player, characterOffset: {x:0 , y: speed}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -330,6 +314,7 @@ function animete() {
     }else if(keys.a.pressed && !keys.w.pressed && !keys.s.pressed) {
         player.animate = true
         player.image = player.sprites.left
+        checkForCharacterCollision({characters, player, characterOffset: {x:speed , y: 0}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -353,6 +338,7 @@ function animete() {
     }else if(keys.d.pressed && !keys.w.pressed && !keys.s.pressed) {
         player.animate = true
         player.image = player.sprites.right
+        checkForCharacterCollision({characters, player, characterOffset: {x:-speed , y:0}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -377,6 +363,7 @@ function animete() {
     else if(keys.w.pressed && keys.d.pressed ) {
         player.animate = true
         player.image = player.sprites.up
+        checkForCharacterCollision({characters, player, characterOffset: {x:-speedXY , y: speedXY}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -403,6 +390,7 @@ function animete() {
     else if(keys.w.pressed && keys.a.pressed ) {
         player.animate = true
         player.image = player.sprites.up
+        checkForCharacterCollision({characters, player, characterOffset: {x:speedXY , y: speedXY}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -429,6 +417,7 @@ function animete() {
     else if(keys.s.pressed && keys.a.pressed ) {
         player.animate = true
         player.image = player.sprites.down
+        checkForCharacterCollision({characters, player, characterOffset: {x:speedXY , y: -speedXY}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (
@@ -455,6 +444,7 @@ function animete() {
     else if(keys.s.pressed && keys.d.pressed ) {
         player.animate = true
         player.image = player.sprites.down
+        checkForCharacterCollision({characters, player, characterOffset: {x:-speedXY , y: speedXY}})
         for (let i = 0; i <boundaries.length; i++) {
             const boundary = boundaries[i]
             if (

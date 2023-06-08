@@ -5,6 +5,7 @@
  <style>
     *{
         font-family: 'Press Start 2P', cursive;
+        box-sizing: border-box;
     }
     body{
         background-color: black;
@@ -26,6 +27,7 @@
 <div style="display : inline-block; position: relative;">
 <div id="overlappingDiv" style="background-color: rgb(3, 3, 3); position: absolute; top: 0; right: 0; bottom: 0; left: 0; opacity: 0; pointer-events: none; z-index: 10;"></div>
 <canvas></canvas>
+<div id="dialogueBox" style="background-color: white; height: 140px; position: absolute; right: 0; bottom: 0; left:0 ; border-top: 4px black solid; display: none; flex-wrap: nowrap; padding: 12px;"></div>
 <div id="userInterface" style="display: none;">
 <div style="background-color: white; width: 250px;  position: absolute; top: 50px; left:50px; border: 4px black solid; border-radius: 10px; padding: 12px;">
     <h1 style="font-size: 16px;">lv 420. Charmander</h1>
@@ -61,7 +63,7 @@
 <script src="data/battleZones.js"></script>
 <script src="data/attacks.js"></script>
 <script src="data/monsters.js"></script>
-<script src="utils.js"></script>
+<script src="utils.js   "></script>
 <script src="classes.js"></script>
 <script src="pokemon.js"></script>
 <script src="battleScene.js"></script>

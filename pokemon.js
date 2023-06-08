@@ -68,7 +68,7 @@ charactersMap.forEach((row, i) =>{
        })
       )
         characters.push(
-          new Sprite({position: {
+          new Character({position: {
             x:j * Boundary.width + offset.x,
             y:i * Boundary.height + offset.y
         },
@@ -78,7 +78,8 @@ charactersMap.forEach((row, i) =>{
             hold:60
         },
         scale:3.5,
-        animate: true
+        animate: true,
+        dialogue: ['Kiedy gta rp garnuchu?']
      })
     )
     } else if (symbol === 1028) { 
@@ -90,7 +91,7 @@ charactersMap.forEach((row, i) =>{
        })
       )
         characters.push(
-          new Sprite({position: {
+          new Character({position: {
             x:j * Boundary.width + offset.x,
             y:i * Boundary.height + offset.y
         },
@@ -100,7 +101,8 @@ charactersMap.forEach((row, i) =>{
             hold:60
         },
         scale:3.5,
-        animate: false
+        animate: false,
+        dialogue: ['Zaspiewaj freestyle o starym papciu']
      })
     )
     } else if (symbol === 1030) { 
@@ -112,7 +114,7 @@ charactersMap.forEach((row, i) =>{
        })
       )
         characters.push(
-          new Sprite({position: {
+          new Character({position: {
             x:j * Boundary.width + offset.x,
             y:i * Boundary.height + offset.y
         },
@@ -122,7 +124,8 @@ charactersMap.forEach((row, i) =>{
             hold:100
         },
         scale:3.5,
-        animate: true
+        animate: true,
+        dialogue: ['...',' Ahh stary Gorge znowu sie nacpal...']
      })
     )
     }
@@ -474,7 +477,33 @@ function animete() {
 
 let lastKey = ''
 window.addEventListener('keydown', (e) => {
+if(player.isInteracting) {
+    switch(e.key) {
+        case ' ':
+        player.interactionAsset.dialogueIndex++
+
+        const {dialogueIndex, dialogue} = player.interactionAsset
+        if(dialogueIndex <= dialogue.length - 1) {
+        document.querySelector('#dialogueBox').innerHTML = player.interactionAsset.dialogue[dialogueIndex]
+       return
+        }
+        //finish conversation 
+        document.querySelector('#dialogueBox').style.display = 'none'
+        player.isInteracting = false
+        player.interactionAsset.dialogueIndex = 0
+        break
+    }
+    return
+}
     switch (e.key) {
+        case ' ':
+        if(!player.interactionAsset) return
+        //beginning the interaction
+            const firstMessage = player.interactionAsset.dialogue[0]
+            document.querySelector('#dialogueBox').style.display = 'flex'
+            document.querySelector('#dialogueBox').innerHTML = firstMessage
+            player.isInteracting = true
+            break
         case 'w':           
             keys.w.pressed = true
                          

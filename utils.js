@@ -5,7 +5,9 @@ function rectangularCollision({rectangle1, rectangle2}) {
            rectangle1.position.y <= rectangle2.position.y + rectangle2.height)
 }
 function checkForCharacterCollision({characters, player, 
-    characterOffset = {x:0, y:0}}) {
+    characterOffset = {x:0, y:0}
+}) {
+    player.interactionAsset = null
     //monitor for character collision
     for(let i = 0; i < characters.length; i++) {
         const character = characters[i]
@@ -18,7 +20,8 @@ function checkForCharacterCollision({characters, player,
                 y: character.position.y + characterOffset.y,
             }}
         })) {
-            console.log('go')
+            player.interactionAsset = character
+            break
         }
     }
-}
+} 

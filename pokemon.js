@@ -6,6 +6,8 @@ const c = canvas.getContext('2d')
 canvas.width = 1024
 canvas.height = 576
 
+const MAX_SPEED = 3;
+
 const collisionsMap = []
 for (let i = 0; i < collisions.length; i += 70) {
     collisionsMap.push(collisions.slice(i,70 + i))
@@ -196,23 +198,32 @@ const rendeables =[background, ...boundaries, ...battleZones,...characters, play
 const battle = {
     initiated: false
 }
+
+const getPlayerSpriteForDirectionVector = (directionVector) => {
+    if (directionVector.x > 0){
+        return player.sprites.right;
+    } 
+    if (directionVector.x < 0) {
+        return player.sprites.left;
+    } 
+    if (directionVector.y > 0) {
+        return player.sprites.down;
+    }
+    if (directionVector.y < 0) {
+        return player.sprites.up;
+    }
+}
+
 function animete() {
     const animationId = window.requestAnimationFrame(animete)
-    
+
     rendeables.forEach((rendeable) => {
-    rendeable.draw()
+        rendeable.draw()
     })
 
-    const speed = 3
-
-    const speedXY = Math.sqrt(speed*speed/2)
-    
-   let moving = true
-   player.animate = false
-
-   if(battle.initiated) return
-   //activate  a battle 
-   if(keys.w.pressed || keys.a.pressed || keys.d.pressed || keys.s.pressed) {
+    if(battle.initiated) return
+    //activate  a battle 
+    if(keys.w.pressed || keys.a.pressed || keys.d.pressed || keys.s.pressed) {
     for (let i = 0; i <battleZones.length; i++) {
         const battleZone = battleZones[i]
         const overlappingArea = (Math.min(player.position.x + player.width, battleZone.position.x + battleZone.width) - Math.max(player.position.x, battleZone.position.x)) * (Math.min(player.position.y + player.height, battleZone.position.y + battleZone.height) - Math.max(player.position.y, battleZone.position.y))
@@ -255,220 +266,70 @@ function animete() {
             break
          }
         } 
-   }
+    }
 
 
-    if(keys.s.pressed && !keys.a.pressed && !keys.d.pressed){
-        player.animate = true
-        player.image = player.sprites.down
-        checkForCharacterCollision({characters, player, characterOffset: {x:0 , y: -speed}})
+    // tutaj tworzymy sobie vektor kierunku gdzie gracz chce isc np:
+    // prosto lewo -> {x: -1, y: 0} 
+    // skos dół prawo -> {x: 1, y: 1}
+    const directionVector = {x: 0, y: 0};
 
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x,
-                            y: boundary.position.y - speed
-                        }
-                    }
-                })
-                
-             ) {
-                moving = false
-                break
-             }
-            } if(moving)
+    if (keys.w.pressed) directionVector.y -= 1;
+    if (keys.s.pressed) directionVector.y += 1;
+    if (keys.a.pressed) directionVector.x -= 1;
+    if (keys.d.pressed) directionVector.x += 1;
+
+    // sprawdzamy czy to jest ruch po skosie
+    const isDiagonalDirection = Math.abs(directionVector.x) + Math.abs(directionVector.y) === 2;
+
+    // jeśli jest po skosie to zmniejszamy troche prędkość 
+    const speed = isDiagonalDirection ? Math.sqrt(MAX_SPEED*MAX_SPEED/2) : MAX_SPEED
+    
+    // tutaj wektor kierunku mnozymy razy predkosc i mamy cos typu
+    // prosto lewo -> {x: -3, y: 0} 
+    // skos dół prawo -> {x: 2.14, y: 2,14}
+    const diffPosition = {
+        x: directionVector.x * speed, 
+        y: directionVector.y * speed, 
+    }
+    
+    // liczymy nowa pozycje gracza
+    const newPosition = {
+        x: player.position.x + diffPosition.x,
+        y: player.position.y + diffPosition.y
+    }
+    
+    player.animate = true;
+    
+    // sprawdzamy czy nowa pozycja koliduje z jakims npc
+    if (checkCollisionWithBoundaries({ ...player, position: newPosition }, characters)) {
+        console.log('go')
+    }
+    
+    if ((directionVector.x !== 0 || directionVector.y !== 0) && !checkCollisionWithBoundaries({ ...player, position: newPosition }, boundaries)) {
+        // ten if sprawdza czy mamy jakis kierunek wybrany i czy nowa pozycja ma kolizje 
+        player.image = getPlayerSpriteForDirectionVector(directionVector) 
         movables.forEach((movable) => {
-            movable.position.y -=speed
+            movable.position.x -= diffPosition.x
+            movable.position.y -= diffPosition.y
         }) 
-        
-    }else if(keys.w.pressed && !keys.d.pressed && !keys.a.pressed) {
-        player.animate = true
-        player.image = player.sprites.up
-        checkForCharacterCollision({characters, player, characterOffset: {x:0 , y: speed}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x,
-                            y: boundary.position.y + speed
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
+    } else if (directionVector.x !== 0 && !checkCollisionWithBoundaries({ ...player, position: { x: newPosition.x, y: player.position.y } }, boundaries)) {
+        // ten if sprawdza czy moze skoro jest jakas kolizja to da sie przynajmniej w jednym kierunku isc 
+        // np gracz naciska po skosie gora prawo ale blokade ma tylko w prawo wiec gracz idzie do gory, jakby slizgal sie po krawedzi 
+        player.image = getPlayerSpriteForDirectionVector({ x: directionVector.x, y: 0 }) 
         movables.forEach((movable) => {
-            movable.position.y +=speed
-        })
-    }else if(keys.a.pressed && !keys.w.pressed && !keys.s.pressed) {
-        player.animate = true
-        player.image = player.sprites.left
-        checkForCharacterCollision({characters, player, characterOffset: {x:speed , y: 0}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x +speed,
-                            y: boundary.position.y
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
+            movable.position.x -= diffPosition.x
+        }) 
+    } else if (directionVector.y !== 0 && !checkCollisionWithBoundaries({ ...player, position: { x: player.position.x, y: newPosition.y } }, boundaries)) {
+        // ten robi to samo co ten wyzej tylko dla drugiego kierunku 
+        player.image = getPlayerSpriteForDirectionVector({ x: 0, y: directionVector.y }) 
         movables.forEach((movable) => {
-            movable.position.x +=speed})
-    }else if(keys.d.pressed && !keys.w.pressed && !keys.s.pressed) {
-        player.animate = true
-        player.image = player.sprites.right
-        checkForCharacterCollision({characters, player, characterOffset: {x:-speed , y:0}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x -speed,
-                            y: boundary.position.y
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
-        movables.forEach((movable) => {
-            movable.position.x -=speed})
+            movable.position.y -= diffPosition.y
+        }) 
+    } else {
+        // jesli gracz nigdzie nie idzie bo jest kolizja albo nie naciska wsad to nie animuj
+        player.animate = false;
     }
-    else if(keys.w.pressed && keys.d.pressed ) {
-        player.animate = true
-        player.image = player.sprites.up
-        checkForCharacterCollision({characters, player, characterOffset: {x:-speedXY , y: speedXY}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x -speedXY,
-                            y: boundary.position.y +speedXY
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
-        movables.forEach((movable) => {
-            movable.position.x -= speedXY
-            movable.position.y += speedXY
-        })
-    }
-    else if(keys.w.pressed && keys.a.pressed ) {
-        player.animate = true
-        player.image = player.sprites.up
-        checkForCharacterCollision({characters, player, characterOffset: {x:speedXY , y: speedXY}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x +speedXY,
-                            y: boundary.position.y +speedXY
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
-        movables.forEach((movable) => {
-            movable.position.x += speedXY
-            movable.position.y += speedXY
-        })
-    }
-    else if(keys.s.pressed && keys.a.pressed ) {
-        player.animate = true
-        player.image = player.sprites.down
-        checkForCharacterCollision({characters, player, characterOffset: {x:speedXY , y: -speedXY}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x +speedXY,
-                            y: boundary.position.y -speedXY
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
-        movables.forEach((movable) => {
-            movable.position.x += speedXY
-            movable.position.y -= speedXY
-        })
-    }
-    else if(keys.s.pressed && keys.d.pressed ) {
-        player.animate = true
-        player.image = player.sprites.down
-        checkForCharacterCollision({characters, player, characterOffset: {x:-speedXY , y: speedXY}})
-        for (let i = 0; i <boundaries.length; i++) {
-            const boundary = boundaries[i]
-            if (
-                rectangularCollision({
-                    rectangle1: player,
-                    rectangle2: {
-                        ...boundary,
-                        position: {
-                            x: boundary.position.x -speedXY,
-                            y: boundary.position.y +speedXY
-                        }
-                    }
-                })
-             ) {
-                moving = false
-                break
-            }
-        } if(moving)
-        movables.forEach((movable) => {
-            movable.position.x -= speedXY
-            movable.position.y -= speedXY
-        })
-    }
-
   }
 
 

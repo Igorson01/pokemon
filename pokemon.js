@@ -475,7 +475,7 @@ function animete() {
   }
 
 
-let lastKey = ''
+
 window.addEventListener('keydown', (e) => {
 if(player.isInteracting) {
     switch(e.key) {
